@@ -6,15 +6,6 @@ aside#left-container{
 }
 
 textarea#geojson-input-box{
-  height:300px;
+  height:80%;
   width:200px;
 }
-
-div#map{
-  display:inline-block;
-  float:right;
-  margin:0px;
-  height:100%;
-  width:80%;
-}
-s

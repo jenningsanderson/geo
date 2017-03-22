@@ -62,7 +62,7 @@ class JSONTextBox extends React.Component  {
       }
     }
 
-    if(!this.state.geojson){
+    if(!this.state){
       this.state = {
         geojson: JSON.stringify(this.history[this.historyIdx],null,2)
       };

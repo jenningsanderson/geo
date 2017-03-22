@@ -5,16 +5,28 @@
   <script src="https://unpkg.com/react@15/dist/react.min.js"></script>
   <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
 
-  <link rel="stylesheet" href="src/css/main.css">
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.34.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.34.0/mapbox-gl.css' rel='stylesheet' />
 
 </head>
 
 <body>
 
-
   <aside id="left-container"></aside>
 
-  <div id="map"></div>
+  <div id="map" style="height:100%;width:80%;display:inline-block;float:right;margin:0px;"></div>
+
+  <script type="text/javascript">
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamVubmluZ3NhbmRlcnNvbiIsImEiOiIzMHZndnpvIn0.PS-j7fRK3HGU7IE8rbLT9A';
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/streets-v9', //stylesheet location
+        center: [-74.50, 40], // starting position
+        zoom: 9, // starting zoom
+        hash:true
+    });
+
+  </script>
 
 <script type="text/javascript" src="index_bundle.js"></script></body>
 </html>
