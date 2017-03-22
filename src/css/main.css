@@ -1,0 +1,20 @@
+aside#left-container{
+  float:left;
+  width: 20%;
+  display:inline-block;
+  margin:0px;
+}
+
+textarea#geojson-input-box{
+  height:300px;
+  width:200px;
+}
+
+div#map{
+  display:inline-block;
+  float:right;
+  margin:0px;
+  height:100%;
+  width:80%;
+}
+s
