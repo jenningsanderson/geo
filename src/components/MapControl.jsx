@@ -61,7 +61,7 @@ class MapControl extends React.Component  {
       try{
         var geojson = JSON.parse(geojsonRaw)
         initialURLorGeoJSON = geojson
-        tthat.props.jsonObjects.add(geojson)
+        that.props.jsonObjects.add(geojson)
 
       }catch(err){
         console.log("Could not parse the raw geoJSON:", err)

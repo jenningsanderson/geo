@@ -51,8 +51,10 @@ class TurfOperations extends React.Component  {
         break;
       case 'simplify':
         res = turf.simplify(this.props.jsonObjects.get(), this.state.amount, false)
+        break;
       case 'bbox_poly':
         res = turf.bboxPolygon(turf.bbox(this.props.jsonObjects.get()))
+        break;
       case 'flip':
         res = turf.flip(this.props.jsonObjects.get())
       default:
