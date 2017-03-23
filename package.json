@@ -4,10 +4,15 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@mapbox/tilebelt": "^1.0.1",
+    "@turf/turf": "^3.14.1",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "react-select": "^1.0.0-rc.3"
   },
   "devDependencies": {
+    "@mapbox/tilebelt": "^1.0.1",
+    "@turf/turf": "^3.14.1",
     "babel": "^6.23.0",
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.1",
@@ -15,6 +20,7 @@
     "babel-preset-react": "^6.23.0",
     "css-loader": "^0.27.3",
     "mapbox-gl": "^0.34.0",
+    "react-select": "^1.0.0-rc.3",
     "style-loader": "^0.15.0",
     "webpack": "^2.3.0",
     "webpack-dev-server": "^2.4.2"

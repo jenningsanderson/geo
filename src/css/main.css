@@ -3,9 +3,26 @@ aside#left-container{
   width: 20%;
   display:inline-block;
   margin:0px;
+  padding-left: 5px;
 }
 
 textarea#geojson-input-box{
-  height:80%;
-  width:200px;
+  height:25%;
+  width:95%;
+}
+
+div#turf-operations{
+  margin-top:5px;
+}
+
+.full-width{
+  width:85%;
+}
+
+.third{
+  width:33%;
+}
+
+.inline{
+  display:inline-block;
 }
