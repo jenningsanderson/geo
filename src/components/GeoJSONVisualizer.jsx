@@ -66,9 +66,8 @@ export default class App extends React.Component {
     this.overRideGeoJSON = this.overRideGeoJSON.bind(this);
     this.fitBounds = this.fitBounds.bind(this);
 
-
     this.state = {
-      'geojson': "Loading..."
+      'geojson': ""
     }
 
     this.jsonObjects = new GeoJSONObjects(this);
@@ -80,13 +79,13 @@ export default class App extends React.Component {
     var initialURLorGeoJSON; //Could be a valid GeoJSON object
 
     //A geojson source has been specified (load from an external URL)
+    var that=this;
     if (geojsonSource){
       console.log('geojsonSource exists: ', geojsonSource)
       initialURLorGeoJSON = geojsonSource
 
       //Kick off an async call here to fetch the contents...
       var oReq = new XMLHttpRequest();
-      var that = this
       oReq.onload = function (e) {
         var json = e.target.response
         that.jsonObjects.add(json)
@@ -100,15 +99,21 @@ export default class App extends React.Component {
       console.log("rawGeojsonExists")
       try{
         var geojson = JSON.parse(geojsonRaw)
-        this.jsonObjects.add(geojson)
         initialURLorGeoJSON = geojson
+        setTimeout(function(){
+          that.jsonObjects.add(geojson)
+        },500) // It just needs to load it first....
+
       }catch(err){
         console.log("Could not parse the raw geoJSON:", err)
       }
 
     // Initial variables have not been set, so load the default point from history
     } else {
-      initialURLorGeoJSON = this.jsonObjects.get()
+      console.log("nothing here... loading default point")
+      setTimeout(function(){
+        initialURLorGeoJSON = that.jsonObjects.get()
+      },500) // It just needs to load it first....
     }
 
     //On initialization, load the map and add the geojson source

@@ -1,6 +1,7 @@
 import React from 'react'
 
 var tilebelt = require('@mapbox/tilebelt')
+var turf     = require('@turf/turf')
 
 class QuadKeyBox extends React.Component  {
 
@@ -13,6 +14,7 @@ class QuadKeyBox extends React.Component  {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.getQuadkey   = this.getQuadkey.bind(this);
   }
 
   handleChange(event) {
@@ -35,11 +37,21 @@ class QuadKeyBox extends React.Component  {
     }
   }
 
-  render() {
-    console.log("rendering quadkeybox")
+  getQuadkey(){
+    var bbox = turf.bbox(this.props.jsonObjects.get())
+    var tile = tilebelt.bboxToTile(bbox)
+    var qk   = tilebelt.tileToQuadkey(tile)
+    if(qk.length > 15){
+      qk = qk.substring(0,15)
+    }
+    this.setState({quadkey: qk})
+  }
 
+  render() {
     return (
       <div>
+        <h2>Quadkey</h2>
+        <button className="btn btn--s round" onClick={this.getQuadkey}>Get Quadkey</button>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.quadkey}
             onChange={this.handleChange} id="quadkey-input-box"/>
