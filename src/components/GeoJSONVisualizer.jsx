@@ -3,6 +3,7 @@ import React from 'react';
 import JSONTextBox from './JSONTextBox.jsx'
 import QuadKeyBox from './QuadKeyBox.jsx'
 import TurfOperations from './TurfOperations.jsx'
+import MapControl from './MapControl.jsx'
 
 var turf = require("@turf/turf")
 
@@ -55,7 +56,6 @@ var GeoJSONObjects = function(that){
       return false
     }
   }
-
 }
 
 export default class App extends React.Component {
@@ -67,81 +67,10 @@ export default class App extends React.Component {
     this.fitBounds = this.fitBounds.bind(this);
 
     this.state = {
-      'geojson': ""
+      'geojson': "",
     }
 
     this.jsonObjects = new GeoJSONObjects(this);
-
-    //check for GET variables, if they exist, then use them.
-    var geojsonSource = getURLParam('src')
-    var geojsonRaw    = getURLParam('geojson')
-
-    var initialURLorGeoJSON; //Could be a valid GeoJSON object
-
-    //A geojson source has been specified (load from an external URL)
-    var that=this;
-    if (geojsonSource){
-      console.log('geojsonSource exists: ', geojsonSource)
-      initialURLorGeoJSON = geojsonSource
-
-      //Kick off an async call here to fetch the contents...
-      var oReq = new XMLHttpRequest();
-      oReq.onload = function (e) {
-        var json = e.target.response
-        that.jsonObjects.add(json)
-      };
-      oReq.open('GET', geojsonSource, true);
-      oReq.responseType = 'json';
-      oReq.send();
-
-    //User has actually entered geojson into the query string;
-    } else if (geojsonRaw){
-      console.log("rawGeojsonExists")
-      try{
-        var geojson = JSON.parse(geojsonRaw)
-        initialURLorGeoJSON = geojson
-        setTimeout(function(){
-          that.jsonObjects.add(geojson)
-        },500) // It just needs to load it first....
-
-      }catch(err){
-        console.log("Could not parse the raw geoJSON:", err)
-      }
-
-    // Initial variables have not been set, so load the default point from history
-    } else {
-      console.log("nothing here... loading default point")
-      setTimeout(function(){
-        initialURLorGeoJSON = that.jsonObjects.get()
-      },500) // It just needs to load it first....
-    }
-
-    //On initialization, load the map and add the geojson source
-    map.once('load',function(){
-      map.addSource("geojsonLayerSource",{
-        type: "geojson",
-        data: initialURLorGeoJSON
-      })
-
-      map.addLayer({
-        'id': 'geojson-circle',
-        'type': 'circle',
-        'source': "geojsonLayerSource"
-      })
-
-      map.addLayer({
-        'id': 'geojson-line',
-        'type': 'line',
-        'source': "geojsonLayerSource"
-      })
-
-      map.addLayer({
-        'id': 'geojson-fill',
-        'type': 'fill',
-        'source': "geojsonLayerSource"
-      })
-
-    })
   }
 
   //Operates independent of history, etc.
@@ -157,21 +86,11 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <JSONTextBox jsonObjects={this.jsonObjects} geojson={this.state.geojson} overRideGeoJSON={this.overRideGeoJSON} fitBounds={this.fitBounds}/>
-        <QuadKeyBox  jsonObjects={this.jsonObjects}/>
+        <MapControl     getURLParam={this.props.getURLParam} jsonObjects={this.jsonObjects} /> {/* This is currently the easiest way to do this... ugly?*/}
+        <JSONTextBox    jsonObjects={this.jsonObjects} geojson={this.state.geojson} overRideGeoJSON={this.overRideGeoJSON} fitBounds={this.fitBounds}/>
+        <QuadKeyBox     jsonObjects={this.jsonObjects}/>
         <TurfOperations jsonObjects={this.jsonObjects}/>
       </div>
     )
   }
-}
-
-//Global function
-function getURLParam(name) {
-  var url = window.location.href;
-  var name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }

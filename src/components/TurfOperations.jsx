@@ -14,7 +14,7 @@ class TurfOperations extends React.Component  {
     this.state = {
       'operation':'buffer',
       'unit':"kilometers",
-      'amount':0.01,
+      'amount':1.0,
       'unitDisabled':false,
       'amountDisabled':false
     }

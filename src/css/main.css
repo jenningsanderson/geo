@@ -32,9 +32,13 @@ h3{margin-bottom:5px;}
 .right{ float:right;}
 .btn{margin:3px;}
 .input{ background-color: white;}
+label.clear{
+  clear:both;
+}
 
 /* Map controller */
 div#map-control{
+  color: #111;
   position: absolute;
   padding: 50px 10px;
   top: 25px;
