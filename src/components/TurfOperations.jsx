@@ -21,12 +21,10 @@ class TurfOperations extends React.Component  {
 
     this.operations = [
       { value: 'buffer',      label: 'Buffer' },
-      { value: 'convex_hull', label: 'Convex Hull' }
-    ]
-
-    this.units = [
-      { value: 'kilometers', label: 'Kilometers' },
-      { value: 'miles', label: 'Miles' }
+      { value: 'convex_hull', label: 'Convex Hull' },
+      { value: 'simplify',    label: 'Simplify' },
+      { value: 'bbox_poly',   label: 'Bounding Box Polygon'},
+      { value: 'flip',        label: 'Flip [x,y] -> [y,x]'}
     ]
 
     this.runTurf = this.runTurf.bind(this);
@@ -51,6 +49,12 @@ class TurfOperations extends React.Component  {
       case 'convex_hull':
         res = turf.convex(this.props.jsonObjects.get())
         break;
+      case 'simplify':
+        res = turf.simplify(this.props.jsonObjects.get(), this.state.amount, false)
+      case 'bbox_poly':
+        res = turf.bboxPolygon(turf.bbox(this.props.jsonObjects.get()))
+      case 'flip':
+        res = turf.flip(this.props.jsonObjects.get())
       default:
         null;
     }
@@ -63,10 +67,15 @@ class TurfOperations extends React.Component  {
 
   updateValue(newValue){
     //What are the operations that don't get values?
-    if(['convex_hull'].indexOf(newValue)>=0){
+    if(['convex_hull','bbox_poly','flip'].indexOf(newValue)>=0){
       this.setState({
         unitDisabled:true,
         amountDisabled:true
+      })
+    }else if (['simplify'].indexOf(newValue)>=0){
+      this.setState({
+        unitDisabled:true,
+        amountDisabled:false
       })
     }else{
       this.setState({
@@ -87,9 +96,9 @@ class TurfOperations extends React.Component  {
 
   render() {
     return (
-      <div id="turf-operations">
+      <div className="operations-box" id="turf-operations">
 
-        <h3>Turf Operations</h3>
+        <h3 className="txt-h3">turf.js Operations</h3>
         <form>
 
   				<Select ref="operationSelect" autofocus simpleValue
@@ -104,23 +113,14 @@ class TurfOperations extends React.Component  {
           <input className='input input--border-teal inline third' type="text" value={this.state.amount} onChange={this.handleAmountChange} disabled={this.state.amountDisabled}></input>
 
           <div className='select-container'>
-          <select className='select select--stroke' onChange={this.updateUnitValue} disabled={this.state.unitDisabled}>
+          <select className='select select--stroke select--white' onChange={this.updateUnitValue} disabled={this.state.unitDisabled}>
             <option value="kilometers">Kilometers</option>
+            <option value="meters">Meters</option>
             <option value="miles">Miles</option>
+            <option value="feet">Feet</option>
           </select>
           <div className='select-arrow'></div>
         </div>
-
-          {/*
-          <Select ref="unitSelect"
-            autofocus simpleValue
-            className="inline third"
-            options={this.units}
-            name="selected-unit"
-            clearable={false}
-            value={this.state.unit}
-            onChange={this.updateUnitValue} searchable={true}
-          /> */}
 
           <input className="btn btn--s round btn--red" type="submit" value="Run" onClick={this.runTurf}></input>
 

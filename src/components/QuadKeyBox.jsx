@@ -25,14 +25,13 @@ class QuadKeyBox extends React.Component  {
     event.preventDefault();
 
     // this.props.jsonObjects.update()
+    if (!this.state.quadkey.length) return
 
     try{
       var quadGeo = tilebelt.tileToGeoJSON(tilebelt.quadkeyToTile(this.state.quadkey))
       map.getSource('geojsonLayerSource').setData(quadGeo)
       this.props.jsonObjects.add(quadGeo)
     }catch(err){
-      // alert("Error, couldn't parse the geojson in the input box")
-      console.log("Error, couldn't parse geojson in the input box", err)
 
     }
   }
@@ -49,8 +48,8 @@ class QuadKeyBox extends React.Component  {
 
   render() {
     return (
-      <div>
-        <h2>Quadkey</h2>
+      <div className="operations-box">
+        <h3 className="txt-h3">Quadkey</h3>
         <button className="btn btn--s round" onClick={this.getQuadkey}>Get Quadkey</button>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.quadkey}

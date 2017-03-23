@@ -49,7 +49,7 @@ class JSONTextBox extends React.Component  {
 
   render() {
     return (
-      <div>
+      <div className="operations-box">
         <form onSubmit={this.handleSubmit}>
           <button id="history_prev" className="btn btn--s round" onClick={this.historyPrevious}>Previous</button>
           <button id="history_next" className="btn btn--s round" onClick={this.historyNext}>Next</button>
@@ -57,7 +57,7 @@ class JSONTextBox extends React.Component  {
           <textarea className="textarea textarea--border-blue txt-s"
             placeholder="Paste GeoJSON here..." value={this.props.geojson} onChange={this.handleChange} id="geojson-input-box"/>
           <input className="btn btn--s btn--red round" type="submit" value="Render" />
-          <button className="btn btn--s round" id="fitBounds" onClick={this.props.fitBounds}>FitBounds</button>
+          <button className="btn btn--s round right" id="fitBounds" onClick={this.props.fitBounds}>FitBounds</button>
         </form>
 
 

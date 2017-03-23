@@ -8,12 +8,6 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   inject: 'body'
 })
 
-const HtmlWebpackPluginConfig2 = new HtmlWebpackPlugin({
-  template: './src/geojson.html',
-  filename: 'geojson.html',
-  inject: 'body'
-})
-
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -27,5 +21,5 @@ module.exports = {
       // { test: /\.css$/, loader: ['css-loader','style-loader']}
     ]
   },
-  plugins: [HtmlWebpackPluginConfig,HtmlWebpackPluginConfig2]
+  plugins: [HtmlWebpackPluginConfig]
 }
