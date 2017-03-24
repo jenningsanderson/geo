@@ -51,11 +51,18 @@ div#map-control{
 }
 
 div#map-control-menu{
-  height: 50px;
-  width: 50px;
+  height: 35px;
+  width: 35px;
   z-index: 900;
   position: absolute;
   top: 25px;
   right: 25px;
-  background-color: blue;
+}
+
+div#about{
+  position:absolute;
+  bottom: 0;
+  left: 0;
+  padding: 15px;
+  width:100%;
 }

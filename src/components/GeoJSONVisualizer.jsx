@@ -10,11 +10,13 @@ var turf = require("@turf/turf")
 /*
    The main object for the page...
 */
+
+
 var GeoJSONObjects = function(that){
-  this.history = [ {type:"Point",coordinates:[-73.50, 40]},
-                   {type:"Point",coordinates:[-74.50, 41]},
-                   {type:"Point",coordinates:[-75.50, 42]} ]
-  this.historyIdx = 2;
+
+  this.history = []
+
+  this.historyIdx = 0;
 
   this.add = function(geojson){
     //If it's the end, then just add it to the end

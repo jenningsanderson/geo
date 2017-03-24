@@ -1,5 +1,7 @@
 import React from 'react'
 
+var turf = require('@turf/turf')
+
 class JSONTextBox extends React.Component  {
 
   constructor(props) {
@@ -10,6 +12,8 @@ class JSONTextBox extends React.Component  {
 
     this.historyNext = this.historyNext.bind(this);
     this.historyPrevious = this.historyPrevious.bind(this);
+
+    this.makeRandom    = this.makeRandom.bind(this);
   }
 
   handleChange(event) {
@@ -18,16 +22,18 @@ class JSONTextBox extends React.Component  {
 
   historyPrevious(){
     var newVal = this.props.jsonObjects.getPrevious()
-    if(newVal){
-      this.setState({geojson: JSON.stringify(newVal,null,2)})
-    }
   }
 
   historyNext(){
     var newVal = this.props.jsonObjects.getNext()
-    if(newVal){
-      this.setState({geojson: JSON.stringify(newVal,null,2)})
-    }
+  }
+
+  makeRandom(){
+    var poly = turf.random('polygons', 1, {
+      bbox: [-160, -60, 160, 60]
+    });
+    this.props.jsonObjects.add(poly)
+    map.getSource('geojsonLayerSource').setData(poly)
   }
 
   handleSubmit(event) {
@@ -53,6 +59,8 @@ class JSONTextBox extends React.Component  {
         <form onSubmit={this.handleSubmit}>
           <button id="history_prev" className="btn btn--s round" onClick={this.historyPrevious}>Previous</button>
           <button id="history_next" className="btn btn--s round" onClick={this.historyNext}>Next</button>
+          <button id="random" className="btn btn--s round right" onClick={this.makeRandom}>Random</button>
+
 
           <textarea className="textarea textarea--border-blue txt-s"
             placeholder="Paste GeoJSON here..." value={this.props.geojson} onChange={this.handleChange} id="geojson-input-box"/>

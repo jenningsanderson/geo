@@ -3,6 +3,19 @@ import ReactDOM from 'react-dom';
 
 var Select = require('react-select');
 
+var turf = require('@turf/turf')
+
+function createIcon(icon) {
+  var svgNS = 'http://www.w3.org/2000/svg';
+  var xlinkNS = 'http://www.w3.org/1999/xlink';
+  var svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttributeNS(null, 'class', 'icon');
+  var use = document.createElementNS(svgNS, 'use');
+  use.setAttributeNS(xlinkNS, 'xlink:href', '#icon-' + icon);
+  svg.appendChild(use);
+  return svg;
+}
+
 class MapControl extends React.Component  {
 
   constructor(props) {
@@ -17,20 +30,24 @@ class MapControl extends React.Component  {
       { value: 'satellite',   label: 'Satellite'}
     ]
 
-    this.updateBaseStyle = this.updateBaseStyle.bind(this);
-    this.toggleVis = this.toggleVis.bind(this);
+    this.updateBaseStyle   = this.updateBaseStyle.bind(this);
+    this.toggleVis         = this.toggleVis.bind(this);
     this.handleLayerToggle = this.handleLayerToggle.bind(this);
+    this.paint             = this.paint.bind(this);
+    this.handleSlider      = this.handleSlider.bind(this);
+    this.handleHueSlider   = this.handleHueSlider.bind(this);
 
     //Load some URL variables here, if we need to change
 
     this.state = {
       visible: true,
       baseStyle: "streets",
-      layers:  {'geojsonCircle' : {visibility: 'visible'},
-                'geojsonLine'   : {visibility: 'visible'},
-                'geojsonFill'   : {visibility: 'visible'}
+      layers:  {'geojsonCircle' : {visibility: 'visible', opacity: 0.8, color: 'salmon', colorValue: 6},
+                'geojsonLine'   : {visibility: 'visible', opacity: 1,   color: 'salmon', colorValue: 6},
+                'geojsonFill'   : {visibility: 'visible', opacity: 0.6, color: 'salmon', colorValue: 6}
               },
-      sources:[{ id: 'geojsonLayerSource', active: true}]
+      sources:[{ id: 'geojsonLayerSource', active: true}],
+      menuIcon: '#icon-close'
     }
   }
 
@@ -69,16 +86,29 @@ class MapControl extends React.Component  {
 
     // Initial variables have not been set, so load the default point from history
     } else {
-      console.log("nothing here... loading default point")
+      console.log("nothing here... ")
+      var points = turf.random('points', 25, {
+        bbox: [-160, -60, 160, 60]
+      });
+
+      var polygons = turf.random('polygons', 1, {
+        bbox: [-160, -60, 160, 60]
+      });
+      that.props.jsonObjects.add(points);
+      that.props.jsonObjects.add(polygons);
       initialURLorGeoJSON = that.props.jsonObjects.get()
     }
 
-    var that = this;
+    this.paint(initialURLorGeoJSON)
 
+  }
+
+  paint(data){
+    var that = this;
     map.on('load',function(){
       map.addSource("geojsonLayerSource",{
         type: "geojson",
-        data: initialURLorGeoJSON
+        data: data
       })
 
       map.addLayer({
@@ -87,6 +117,10 @@ class MapControl extends React.Component  {
         'source': "geojsonLayerSource",
         'layout':{
           'visibility' : that.state.layers.geojsonCircle.visibility
+        },
+        'paint':{
+          'circle-color':that.state.layers.geojsonCircle.color,
+          'circle-opacity':that.state.layers.geojsonCircle.opacity
         }
       })
 
@@ -96,6 +130,10 @@ class MapControl extends React.Component  {
         'source': "geojsonLayerSource",
         'layout':{
           'visibility' : that.state.layers.geojsonLine.visibility
+        },
+        'paint':{
+          'line-color':that.state.layers.geojsonLine.color,
+          'line-opacity':that.state.layers.geojsonLine.opacity
         }
       })
 
@@ -105,13 +143,19 @@ class MapControl extends React.Component  {
         'source': "geojsonLayerSource",
         'layout':{
           'visibility' : that.state.layers.geojsonFill.visibility
+        },
+        'paint':{
+          'fill-color':that.state.layers.geojsonFill.color,
+          'fill-opacity':that.state.layers.geojsonFill.opacity
         }
+
       })
     })
   }
 
   toggleVis(){
     this.setState({
+      menuIcon: this.state.menuIcon == '#icon-menu' ? '#icon-close' : '#icon-menu',
       visible: !this.state.visible
     })
   }
@@ -134,40 +178,7 @@ class MapControl extends React.Component  {
 
     var that = this;
 
-    map.on('load',function(){
-
-      map.addSource("geojsonLayerSource",{
-        type: "geojson",
-        data: that.props.jsonObjects.get()
-      })
-
-      map.addLayer({
-        'id': 'geojsonCircle',
-        'type': 'circle',
-        'source': "geojsonLayerSource",
-        'layout':{
-          'visibility' : that.state.layers.geojsonCircle.visibility
-        }
-      })
-
-      map.addLayer({
-        'id': 'geojsonLine',
-        'type': 'line',
-        'source': "geojsonLayerSource",
-        'layout':{
-          'visibility' : that.state.layers.geojsonLine.visibility
-        }
-      })
-
-      map.addLayer({
-        'id': 'geojsonFill',
-        'type': 'fill',
-        'source': "geojsonLayerSource",
-        'layout':{
-          'visibility' : that.state.layers.geojsonFill.visibility
-        }
-      })
-    })
+    this.paint(this.props.jsonObjects.get())
   }
 
   handleLayerToggle(event){
@@ -182,13 +193,65 @@ class MapControl extends React.Component  {
     });
   }
 
+  handleSlider(event){
+
+    var newLayers = this.state.layers
+    newLayers[event.target.name].opacity = Number(event.target.value)
+
+    this.setState({
+      layers: newLayers
+    })
+
+    var prop;
+    switch(event.target.name){
+      case 'geojsonCircle':
+        prop = 'circle-opacity'
+        break;
+      case 'geojsonLine':
+        prop = 'line-opacity'
+        break;
+      case 'geojsonFill':
+        prop = 'fill-opacity'
+        break;
+      default:
+        break;
+    }
+
+    map.setPaintProperty(event.target.name, prop, Number(event.target.value))
+  }
+
+  handleHueSlider(event){
+    var newLayers = this.state.layers
+    newLayers[event.target.name].colorValue = event.target.value
+    this.setState({
+      layers: newLayers
+    })
+    var prop;
+    switch(event.target.name){
+      case 'geojsonCircle':
+        prop = 'circle-color'
+        break;
+      case 'geojsonLine':
+        prop = 'line-color'
+        break;
+      case 'geojsonFill':
+        prop = 'fill-color'
+        break;
+      default:
+        break;
+    }
+    map.setPaintProperty(event.target.name,prop,'hsl('+event.target.value+',93%,71%)')
+  }
+
   render() {
     return(
       <div>
-        <div className='cursor-pointer' id="map-control-menu" onClick={this.toggleVis}></div>
+        <div className='cursor-pointer' id="map-control-menu" onClick={this.toggleVis}>
+          <svg className='icon--l'><use xlinkHref={this.state.menuIcon}/></svg>
+        </div>
         { this.state.visible ?
           <div id="map-control">
-            <h4 className="txt-h4">Map Style</h4>
+            <h4 className="txt-h4 mb12 border-b border--2">Map Style</h4>
             <Select ref="backgroundSelect" name="background-style-chooser" autofocus simpleValue
               className="full-width"
               options={this.baseStyles}
@@ -196,24 +259,53 @@ class MapControl extends React.Component  {
               onChange={this.updateBaseStyle} searchable={true}
             />
 
-            <h4 className="txt-h4 pt12">Render: </h4>
-            <label className='switch-container'>
+            <h4 className="txt-h4 pt24 border-b border--2">Render </h4>
+
+            <label className='switch-container pt18'>
               <input type='checkbox' name="geojsonCircle" defaultChecked onChange={this.handleLayerToggle}/>
               <div className='switch switch--blue switch--dot-white mr6'></div>
-              Points
+              <span className="txt-h5 pt6">Points</span>
             </label>
 
-            <label className='switch-container'>
+            <div className='range'>
+              <input name="geojsonCircle" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonCircle.opacity}/>
+            </div>
+
+            <div className='range border-b border--2'>
+              <input name="geojsonCircle" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonCircle.colorValue}/>
+            </div>
+
+
+            <label className='switch-container pt18'>
               <input type='checkbox' name="geojsonLine" defaultChecked onChange={this.handleLayerToggle}/>
               <div className='switch switch--blue switch--dot-white mr6'></div>
-              Lines
+              <span className="txt-h5 pt6 ">Lines</span>
             </label>
 
-            <label className='switch-container'>
+            <div className='range'>
+              <input name="geojsonLine" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonLine.opacity}/>
+            </div>
+
+            <div className='range border-b border--2'>
+              <input name="geojsonLine" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonLine.colorValue}/>
+            </div>
+
+            {/* <span className="txt-h5 pt6 border-b">Opacity</span> */}
+
+            <label className='switch-container pt18'>
               <input type='checkbox' name="geojsonFill" defaultChecked onChange={this.handleLayerToggle}/>
               <div className='switch switch--blue switch--dot-white mr6'></div>
-              Fill
+              <span className="txt-h5 pt6">Polygons</span>
             </label>
+
+            <div className='range'>
+              <input name="geojsonFill" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonFill.opacity}/>
+            </div>
+
+            <div className='range border-b border--2'>
+              <input name="geojsonFill" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonFill.colorValue}/>
+            </div>
+
           </div>
         : null}
       </div>
