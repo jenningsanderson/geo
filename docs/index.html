@@ -4,24 +4,98 @@
 
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.34.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.34.0/mapbox-gl.css' rel='stylesheet' />
-
   <link href="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.min.css" rel="stylesheet">
+  <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css">
+
+  <title>Visualize and manipulate GeoJSON in the Browser</title>
 
 </head>
 
 <body>
-
   <aside id="left-container">
-    <h3 class="txt-h3">Visualize GeoJSON</h3>
+    <div style="padding-top:10px;">
+      <h3 class="inline txt-h3 p6">GeoJSON</h3>
+      <svg class='right link icon icon--l' onClick="toggleInfoBox(1)"><use xlink:href='#icon-info'/></svg>
+    </div>
+
     <div id="left-container-react"></div>
+
+    <div id="about">
+      <p>2017 <a class="link" target="_blank" href="http://www.townsendjennings.com">Jennings Anderson</a> &amp; <span onClick="toggleInfoBox(scrollTop=500)" class="link">More</span></p>
+      <p><a href="http://github.com/jenningsanderson/geo.git" target="_blank">
+        <button style="margin-left:35px;" class="btn btn--s round">Source</button>
+      </a>
+      <a href="http://townsendjennings.com/geosite-post" target="_blank">
+        <button style="margin-left:5px;" class="btn btn--s round">About</button>
+      </a></p>
+    </div>
   </aside>
 
   <div id="map-control-box"></div>
 
   <div id="map" style="height:100%;width:80%;display:inline-block;float:right;margin:0px;"></div>
 
+  <div id="information-box" class="prose" style="display:none;">
+    <div style="position:absolute; top:0; right:0;"class="link" onclick="toggleInfoBox(0)">
+      <svg class='icon--l'><use xlink:href="#icon-close"></svg>
+    </div>
+    <div id="information-box-content" class="prose">
+
+      <h1>Web-Based GeoJSON Visualization &amp; GeoProcessing</h1>
+
+      <p class="txt-l">There are three ways to load geojson data:</p>
+      <ol>
+        <li>Paste geojson directly into the geojson text box and click <span class="btn btn--s btn--red round">Render</span></li>
+        <li>Use the <span class="txt-kbd">src=</span> URL variable to point to a valid geojson source file.<br>
+          <a class="link" target="_blank" href="http://townsendjennings.com/geo/?src=https://raw.githubusercontent.com/johan/world.geo.json/master/countries/ESP.geo.json">
+            <em>http://townsendjennings.com/geo/?src=https://raw.githubusercontent.com/johan/world.geo.json/master/countries/ESP.geo.json</em>
+          </a>
+        </li>
+        <li>Use the <span class="txt-kbd">geojson=</span> URL variable to pass geojson in directly. <br>
+          <a class="link" target="_blank" href='http://townsendjennings.com/geo/?geojson={"type":"Point","coordinates":[3.1977,46.6841]}'>
+            <em>http://townsendjennings.com/geo/?geojson={"type":"Point","coordinates":[3.1977,46.6841]}</em>
+          </a>
+        </li>
+      </ol>
+      <p>If no sources are specified, the page will automatically generate two datasets: random points and random polygons. You can toggle between the two with <span class="btn btn--s btn--blue round">Previous</span> and <span class="btn btn--s btn--blue round">Next</span></p>
+
+      <p><span class="btn btn--s btn--red round">Render</span> will attempt to parse the text in the input box and if it is valid geojson, it will render it on the map.<p>
+
+      <p><span class="btn btn--s btn--blue round">Fit Bounds</span> will move the map to the bounds of the currently rendered objects.
+
+      <p><span class="btn btn--s btn--blue round">Previous</span> and <span class="btn btn--s btn--blue round">Next</span> will cycle through the history of successfully rendered geojson objects. Each time a new geojson object is created, the previous geojson is stored in history.
+
+      <h2>Quadkey</h2>
+      Clicking <span class="btn btn--s btn--blue round">Get Quadkey</span> will populate the quadkey input box with the quadkey for the smallest tile that can fit the currenty rendered geojson (with max zoom 15). <span class="btn btn--s btn--red round">Render Quadkey</span> renders a GeoJSON polygon representation of the quadkey value currently in the text box.
+
+      <h2>turf.js Operations</h2>
+
+      A few turf.js operations can be selected from the drop down menu. If applicable to the selected operation, the amount and units can be adjusted. <span class="btn btn--s btn--red round">Run</span> then performs the selected operation on the currently rendered geojson, updating the map with the results. To undo the operation, click <span class="btn btn--s btn--blue round">Previous</span>.
+
+
+      <h3 border-b>Built with these frameworks and tools:</h3>
+      <p><a target="_blank" href="https://www.mapbox.com/mapbox-gl-js/api/">mapbox-gl-js: </a>The map, all map styles, and the rendering of the geojson is all handled by the mapbox-gl-js javascript library.
+       </p>
+      <p><a target="_blank" href="http://turfjs.org/">turf-js:</a> GeoProcessing in the browser! The site currently implements just a fraction of the turf functions. With inspiration (and credit to) the former <a href="https://github.com/tcql/turf-playground" target="_blank">turfjs.party site</a>.</p>
+      <p><a target="_blank" href="https://github.com/mapbox/tilebelt">tilebelt:</a> A small and very powerful set of helper functions for working with tiles, bounding boxes, and quadkeys.</p>
+      <p><a target="_blank" href="https://www.codementor.io/tamizhvendan/beginner-guide-setup-reactjs-environment-npm-babel-6-webpack-du107r9zr">react-js &amp; webpack:</a> I used this tutorial to get started (this was a first time react.js project).</p>
+    </div>
+  </div>
+
   <script type="text/javascript">
+
+    function toggleInfoBox(scrollTop){
+      var box = document.getElementById('information-box')
+      var displayVal = box.style.display
+      box.style.display = displayVal == 'none' ? 'block' : 'none';
+
+      if (displayVal=='none' && scrollTop){
+        var element = document.getElementById("information-box-content");
+        element.scrollTop = scrollTop;
+      }
+    }
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiamVubmluZ3NhbmRlcnNvbiIsImEiOiIzMHZndnpvIn0.PS-j7fRK3HGU7IE8rbLT9A';
       var map = new mapboxgl.Map({
         container: 'map', // container id
