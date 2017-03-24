@@ -42,7 +42,7 @@ class QuadKeyBox extends React.Component  {
     var qk   = tilebelt.tileToQuadkey(tile)
     if(qk.length > 15){
       qk = qk.substring(0,15)
-    }
+    }web
     this.setState({quadkey: qk})
   }
 

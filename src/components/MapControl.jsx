@@ -43,6 +43,7 @@ class MapControl extends React.Component  {
   componentWillMount(){
     var geojsonSource = this.props.getURLParam('src')
     var geojsonRaw    = this.props.getURLParam('geojson')
+    var loadGeoJSON    = this.props.getURLParam('load')
 
     var initialURLorGeoJSON;
     var that=this;
@@ -51,15 +52,20 @@ class MapControl extends React.Component  {
       console.log('geojsonSource exists: ', geojsonSource)
       initialURLorGeoJSON = geojsonSource
 
-      //Kick off an async call here to fetch the contents...
-      var oReq = new XMLHttpRequest();
-      oReq.onload = function (e) {
-        var json = e.target.response
-        that.props.jsonObjects.add(json)
-      };
-      oReq.open('GET', geojsonSource, true);
-      oReq.responseType = 'json';
-      oReq.send();
+      if(loadGeoJSON!='false'){
+
+        //Kick off an async call here to fetch the contents...
+        var oReq = new XMLHttpRequest();
+        oReq.onload = function (e) {
+          var json = e.target.response
+          that.props.jsonObjects.add(json)
+        };
+        oReq.open('GET', geojsonSource, true);
+        oReq.responseType = 'json';
+        oReq.send();
+      }else{
+        that.props.over
+      }
 
     //User has actually entered geojson into the query string;
     } else if (geojsonRaw){
