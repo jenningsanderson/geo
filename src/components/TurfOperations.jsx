@@ -100,7 +100,7 @@ class TurfOperations extends React.Component  {
     return (
       <div className="operations-box" id="turf-operations">
 
-        <h3 className="txt-h3">turf.js Operations</h3>
+        <h4 className="txt-h4 pb12">turf.js Operations</h4>
         <form>
 
   				<Select ref="operationSelect" autofocus simpleValue

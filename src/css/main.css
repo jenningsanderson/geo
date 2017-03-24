@@ -66,3 +66,20 @@ div#about{
   padding: 15px;
   width:100%;
 }
+
+div#information-box{
+  position: absolute;
+  top:50px;
+  left: 25%;
+  margin: 0 auto;
+  border: 10px solid #333;
+
+  width: 50%;
+  padding: 10px;
+  background-color:#FFF;
+}
+
+div#information-box-content{
+  height: 700px;
+  overflow-y:scroll;
+}

@@ -5,17 +5,6 @@ var Select = require('react-select');
 
 var turf = require('@turf/turf')
 
-function createIcon(icon) {
-  var svgNS = 'http://www.w3.org/2000/svg';
-  var xlinkNS = 'http://www.w3.org/1999/xlink';
-  var svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttributeNS(null, 'class', 'icon');
-  var use = document.createElementNS(svgNS, 'use');
-  use.setAttributeNS(xlinkNS, 'xlink:href', '#icon-' + icon);
-  svg.appendChild(use);
-  return svg;
-}
-
 class MapControl extends React.Component  {
 
   constructor(props) {
@@ -268,10 +257,12 @@ class MapControl extends React.Component  {
             </label>
 
             <div className='range'>
+              <span className="pr12">Opacity: </span>
               <input name="geojsonCircle" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonCircle.opacity}/>
             </div>
 
             <div className='range border-b border--2'>
+              <span className="pr12">Hue: </span>
               <input name="geojsonCircle" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonCircle.colorValue}/>
             </div>
 
@@ -283,14 +274,14 @@ class MapControl extends React.Component  {
             </label>
 
             <div className='range'>
+              <span className="pr12">Opacity: </span>
               <input name="geojsonLine" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonLine.opacity}/>
             </div>
 
             <div className='range border-b border--2'>
+              <span className="pr12">Hue: </span>
               <input name="geojsonLine" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonLine.colorValue}/>
             </div>
-
-            {/* <span className="txt-h5 pt6 border-b">Opacity</span> */}
 
             <label className='switch-container pt18'>
               <input type='checkbox' name="geojsonFill" defaultChecked onChange={this.handleLayerToggle}/>
@@ -299,10 +290,12 @@ class MapControl extends React.Component  {
             </label>
 
             <div className='range'>
+              <span className="pr12">Opacity: </span>
               <input name="geojsonFill" type='range' min='0' max='1' step='0.05' onChange={this.handleSlider} value={this.state.layers.geojsonFill.opacity}/>
             </div>
 
             <div className='range border-b border--2'>
+              <span className="pr12">Hue: </span>
               <input name="geojsonFill" type='range' min='0' max='360' step='1' onChange={this.handleHueSlider} value={this.state.layers.geojsonFill.colorValue}/>
             </div>
 

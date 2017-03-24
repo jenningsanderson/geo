@@ -49,7 +49,7 @@ class QuadKeyBox extends React.Component  {
   render() {
     return (
       <div className="operations-box">
-        <h3 className="txt-h3">Quadkey</h3>
+        <h4 className="txt-h4 pb12">Quadkey</h4>
         <button className="btn btn--s round" onClick={this.getQuadkey}>Get Quadkey</button>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.quadkey}
