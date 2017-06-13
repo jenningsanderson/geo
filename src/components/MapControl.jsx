@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 var Select = require('react-select');
 
 var turf = require('@turf/turf')
+// var mapboxgl = require('mapbox-gl')
 
 class MapControl extends React.Component  {
 
@@ -143,8 +144,35 @@ class MapControl extends React.Component  {
           'fill-color':that.state.layers.geojsonFill.color,
           'fill-opacity':that.state.layers.geojsonFill.opacity
         }
-
       })
+      map.on('mousemove', function(e){
+        var features = map.queryRenderedFeatures(e.point, {layers: ['geojsonFill']})
+        map.getCanvas().style.cursor = (features.length>0)? 'pointer' : '';
+      });
+
+      map.on('click', function(e){
+        var features = map.queryRenderedFeatures(e.point, {layers: ['geojsonFill']})
+
+        if(!features.length){return};
+        var props = features[0].properties
+
+        var html = "<table>"
+        Object.keys(props).forEach(function(key){
+          html += `<tr><td>${key}</td><td>${props[key]}</td></tr>`
+        })
+
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(html + '</table>')
+          .addTo(map);
+
+        // console.log(e)
+        // if (!e.features.length) return;
+        // new mapboxgl.Popup()
+        //
+        //
+        //
+      });
     })
   }
 
