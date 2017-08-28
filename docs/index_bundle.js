@@ -21062,12 +21062,12 @@ var MapControl = function (_React$Component) {
           }
         });
         map.on('mousemove', function (e) {
-          var features = map.queryRenderedFeatures(e.point, { layers: ['geojsonFill'] });
+          var features = map.queryRenderedFeatures(e.point, { layers: ['geojsonFill', 'geojsonCircle'] });
           map.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
         });
 
         map.on('click', function (e) {
-          var features = map.queryRenderedFeatures(e.point, { layers: ['geojsonFill'] });
+          var features = map.queryRenderedFeatures(e.point, { layers: ['geojsonFill', 'geojsonCircle'] });
 
           if (!features.length) {
             return;
@@ -21076,7 +21076,7 @@ var MapControl = function (_React$Component) {
 
           var html = "<table>";
           Object.keys(props).forEach(function (key) {
-            html += '<tr><td>' + key + '</td><td>' + props[key] + '</td></tr>';
+            html += '<tr><td><span style="margin-right:10px; font-weight:700;">' + key + '</span></td><td>' + props[key] + '</td></tr>';
           });
 
           new mapboxgl.Popup().setLngLat(e.lngLat).setHTML(html + '</table>').addTo(map);
